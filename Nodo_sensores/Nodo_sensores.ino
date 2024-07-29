@@ -37,8 +37,11 @@ const char* serverEndpointSaveData = "http://172.212.120.151/ms3/climate-datas";
 const String endpointGetNodeStatus = "http://172.212.120.151/ms4/alerts/node-status/" + String(NODE_CODE);
 // const String endpointGetNodeStatus = "http://192.168.1.119:4000/ms4/alerts/node-status/" + String(NODE_CODE);
 const char* serverEndpointGetNodeStatus = endpointGetNodeStatus.c_str();
-const char* ssid = "RED-ViVi";
-const char* password = "ladeantes";
+// const char* ssid = "RED-ViVi";
+// const char* password = "ladeantes";
+// U
+const char* ssid = "Internet_UNL";
+const char* password = "UNL1859WiFi";
 // Variables para conexión a servidor de sockets
 // SocketIoClient socket;
 // const char* socketsServerEndpoint = "192.168.1.119";
@@ -50,10 +53,13 @@ const long interval = 40000;  // Intervalo de tiempo a realizar petición (1 min
 
 // Variables para definir tiempo de actualización de alerta
 unsigned long previousMillisUpdateAlert = 0;
-const long intervalUpdateAlert = 1500;  // Intervalo de tiempo a realizar petición (1 minuto)
+const long intervalUpdateAlert = 2000;  // Intervalo de tiempo a realizar petición (1 minuto)
 
 // Valor de R0 obtenido después de la calibración
-const float R0_CO2 = 104883.01;
+const float R0_CO2 = 50;
+const float R0_CO21 = 80;
+const float R0_CO22 = 150;
+// const float R0_CO2 = 104883.01;
 
 // MQ135 gasSensor = MQ135(PIN_CO2);
 
@@ -126,6 +132,10 @@ void loop() {
   digitalWrite(LED_QUALITY_NORMAL, LOW);
   digitalWrite(LED_QUALITY_BAD, LOW);
   digitalWrite(LED_QUALITY_DANGER, LOW);
+
+  double CO2 = getCo2();
+  Serial.print("CO2: ");
+  Serial.println(CO2);
 
   // Comprobar si ha pasado el intervalo de tiempo
   if (currentMillis - previousMillis >= interval) {
@@ -266,21 +276,32 @@ float getHumedad() {
 // Función para obtener el CO2
 double getCo2() {
   //Valor dado por el sensor
-  MQ135 gasSensor = MQ135(PIN_CO2);
+  MQ135 gasSensor = MQ135(PIN_CO2, R0_CO2);
+  MQ135 gasSensor1 = MQ135(PIN_CO2, R0_CO21);
+  MQ135 gasSensor2 = MQ135(PIN_CO2, R0_CO22);
 
-  float air_quality = gasSensor.getPPM();  //Leido de forma analogica
-  //V_leido=5(1000/(Rs+1000))
-  //Rs=1000((5-V)/V)
-  float voltaje = air_quality * (5.0 / 1023.0);  // Parte indispensable
-  Serial.println("Voltaje:  ");
-  Serial.println(voltaje);
-  float Rs = 1000 * ((5 - voltaje) / voltaje);  // Resistencia del sensor
-  double CO2 = 122.06 * pow((Rs / R0_CO2), -2.845);
-  //400 = 122.06 * (Rs/R0_CO2^-2,845)
-  Serial.print(air_quality);
-  Serial.println(" PPM");
-  Serial.println("-----Valor obtenido del CO2-----");
-  Serial.print(CO2);
+  // float air_quality = gasSensor.getPPM();  //Leido de forma analogica
+  // //V_leido=5(1000/(Rs+1000))
+  // //Rs=1000((5-V)/V)
+  // float voltaje = air_quality * (5.0 / 1023.0);  // Parte indispensable
+  // Serial.println("Voltaje:  ");
+  // Serial.println(voltaje);
+  // float Rs = 1000 * ((5 - voltaje) / voltaje);  // Resistencia del sensor
+  // double CO2 = 122.06 * pow((Rs / R0_CO2), -2.845);
+  // //400 = 122.06 * (Rs/R0_CO2^-2,845)
+  // Serial.print(air_quality);
+  // Serial.println(" PPM");
+  // Serial.println("-----Valor obtenido del CO2-----");
+  // Serial.print(CO2);
+  double CO2 = gasSensor.getPPM();
+  double CO21 = gasSensor1.getPPM();
+  double CO22 = gasSensor2.getPPM();
+
+  Serial.print("TRES VALORES CO2:");
+  Serial.println(CO2);
+  Serial.println(CO21);
+  Serial.println(CO22);
+
 
   return CO2;
 }
