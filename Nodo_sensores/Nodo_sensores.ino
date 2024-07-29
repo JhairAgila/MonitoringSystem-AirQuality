@@ -39,7 +39,8 @@ const String endpointGetNodeStatus = "http://172.212.120.151/ms4/alerts/node-sta
 const char* serverEndpointGetNodeStatus = endpointGetNodeStatus.c_str();
 // const char* ssid = "RED-ViVi";
 // const char* password = "ladeantes";
-// U
+// const char* ssid = "Viviana";
+// const char* password = "mayonesa12345";
 const char* ssid = "Internet_UNL";
 const char* password = "UNL1859WiFi";
 // Variables para conexión a servidor de sockets
@@ -56,9 +57,7 @@ unsigned long previousMillisUpdateAlert = 0;
 const long intervalUpdateAlert = 2000;  // Intervalo de tiempo a realizar petición (1 minuto)
 
 // Valor de R0 obtenido después de la calibración
-const float R0_CO2 = 50;
-const float R0_CO21 = 80;
-const float R0_CO22 = 150;
+const float R0_CO2 = 173.45;
 // const float R0_CO2 = 104883.01;
 
 // MQ135 gasSensor = MQ135(PIN_CO2);
@@ -132,10 +131,6 @@ void loop() {
   digitalWrite(LED_QUALITY_NORMAL, LOW);
   digitalWrite(LED_QUALITY_BAD, LOW);
   digitalWrite(LED_QUALITY_DANGER, LOW);
-
-  double CO2 = getCo2();
-  Serial.print("CO2: ");
-  Serial.println(CO2);
 
   // Comprobar si ha pasado el intervalo de tiempo
   if (currentMillis - previousMillis >= interval) {
@@ -277,8 +272,6 @@ float getHumedad() {
 double getCo2() {
   //Valor dado por el sensor
   MQ135 gasSensor = MQ135(PIN_CO2, R0_CO2);
-  MQ135 gasSensor1 = MQ135(PIN_CO2, R0_CO21);
-  MQ135 gasSensor2 = MQ135(PIN_CO2, R0_CO22);
 
   // float air_quality = gasSensor.getPPM();  //Leido de forma analogica
   // //V_leido=5(1000/(Rs+1000))
@@ -294,13 +287,15 @@ double getCo2() {
   // Serial.println("-----Valor obtenido del CO2-----");
   // Serial.print(CO2);
   double CO2 = gasSensor.getPPM();
-  double CO21 = gasSensor1.getPPM();
-  double CO22 = gasSensor2.getPPM();
-
-  Serial.print("TRES VALORES CO2:");
-  Serial.println(CO2);
-  Serial.println(CO21);
-  Serial.println(CO22);
+  // Serial.println("==================================================");
+  // Serial.println("TRES VALORES CO2:");
+  // Serial.print("CO2 0:");
+  // Serial.println(CO2);
+  // Serial.print("CO2 1:");
+  // Serial.println(CO21);
+  // Serial.print("CO2 2:");
+  // Serial.println(CO22);
+  // Serial.println("==================================================");
 
 
   return CO2;
